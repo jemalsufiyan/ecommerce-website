@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --success: #16a34a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; }
+
+        header { background-color: var(--card-bg); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); position: sticky; top: 0; z-index: 50; }
+        .nav-container { max-width: 1300px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; cursor: pointer; }
+        .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        button, .btn { background-color: var(--primary); color: white; border: none; padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        button:hover, .btn:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+        
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--border-color); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #15803d; }
+        .btn-warning { background-color: #f59e0b; color: white; }
+        .btn-warning:hover { background-color: #d97706; }
+
+        .main-container { max-width: 1300px; margin: 2rem auto; padding: 0 2rem; }
+        .portal-wrapper { min-height: 75vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .portal-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .portal-subtitle { color: var(--text-muted); margin-bottom: 2.5rem; }
+
+        .role-cards-container { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px; }
+        .role-card { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 0.75rem; padding: 2.5rem 2rem; flex: 1; min-width: 260px; cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; align-items: center; }
+        .role-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.15); }
+        .role-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+
+        .search-filter-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+        .search-input-group { flex: 2; min-width: 200px; position: relative; }
+        .search-input-group i { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input-group input { width: 100%; padding: 0.65rem 0.75rem 0.65rem 2.4rem; border: 1px solid var(--border-color); border-radius: 0.375rem; outline: none; }
+        .filter-input-group { flex: 1; min-width: 130px; }
+        .filter-input-group input { width: 100%; padding: 0.65rem 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem; outline: none; }
+
+        .auth-wrapper { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
+        .auth-card { background: var(--card-bg); padding: 2.5rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); width: 100%; max-width: 400px; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.875rem; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; outline: none; background: white; }
+
+        .user-dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        @media (max-width: 900px) { .user-dashboard { grid-template-columns: 1fr; } }
+
+        .admin-dashboard { display: flex; flex-direction: column; gap: 1.5rem; }
+        .admin-header-box { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 2rem; border-radius: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+        .admin-nav-tabs { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .admin-tab-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.75rem 1.25rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .admin-tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-img { width: 100%; height: 160px; object-fit: cover; background-color: #f1f5f9; }
+        .product-info { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .product-title { font-weight: 600; font-size: 1.05rem; margin-bottom: 0.3rem; }
+        .product-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+
+        .status-badge { padding: 0.25rem 0.6rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #dcfce7; color: #166534; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+
+        .card-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1.5rem; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        .cart-total { margin-top: 1rem; font-weight: 700; display: flex; justify-content: space-between; font-size: 1.1rem; }
+        .admin-badge { background-color: #fef3c7; color: #d97706; padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; }
+        .error-msg { color: var(--danger); font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
+        .toggle-link { color: var(--primary); cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a onclick="selectRole(null)" class="logo"><i class="fa-solid fa-store"></i> MyStore Portal</a>
+            <div id="nav-actions" class="nav-right"></div>
+        </div>
+    </header>
+
+    <main class="main-container" id="app-content"></main>
+
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let activeViewMode = localStorage.getItem('activeViewMode') || null;
+        let activeAdminTab = localStorage.getItem('activeAdminTab') || 'add';
+        let isRegisterMode = false;
+        let allProducts = [];
+
+        window.selectRole = function(role) {
+            activeViewMode = role;
+            isRegisterMode = false;
+            if (!role) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('activeViewMode');
+                localStorage.removeItem('activeAdminTab');
+                currentUser = null;
+            } else {
+                localStorage.setItem('activeViewMode', role);
+            }
+            renderApp();
+        };
+
+        window.switchAdminTab = function(tabName) {
+            activeAdminTab = tabName;
+            localStorage.setItem('activeAdminTab', tabName);
+            renderApp();
+        };
+
+        window.toggleAuthMode = function() {
+            isRegisterMode = !isRegisterMode;
+            renderApp();
+        };
+
+        window.addToCart = async function(productId) {
+            if (!currentUser) return;
+            try {
+                const res = await fetch('/api/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUser.user_id, product_id: productId, quantity: 1 })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    window.loadCart();
+                } else {
+                    alert(data.message || 'Error adding to cart');
+                }
+            } catch (err) { alert('Server error'); }
+        };
+
+        window.removeCartItem = async function(cartId) {
+            if (!cartId) return;
+            try {
+                const res = await fetch('/api/cart/' + cartId, { method: 'DELETE' });
+                if (res.ok) window.loadCart();
+            } catch (err) { console.error(err); }
+        };
+
+        window.deleteProduct = async function(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            try {
+                const res = await fetch('/api/products/' + productId, { method: 'DELETE' });
+                if (res.ok) {
+                    await window.loadProducts();
+                    alert('Product deleted successfully');
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        window.updateOrderStatus = async function(orderId, status) {
+            try {
+                const res = await fetch('/api/orders/' + orderId + '/status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    alert('Order status updated to ' + status);
+                    window.loadAdminOrders();
+                    window.loadProducts();
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (err) { alert('Network error'); }
+        };
+
+        window.openEditModal = function(id, name, price, stock, imageUrl) {
+            let modal = document.getElementById('edit-product-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'edit-product-modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;';
+                document.body.appendChild(modal);
+            }
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 0.75rem; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Product Details
+                    </h3>
+                    <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-main);">` + name + `</p>
+                    
+                    <form id="edit-product-form">
+                        <div class="form-group">
+                            <label>Price ($)</label>
+                            <input type="number" step="0.01" id="edit-price" value="` + price + `" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Stock Quantity</label>
+                            <input type="number" id="edit-stock" value="` + stock + `" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Image File (ከኮምፒውተርህ ፋይል)</label>
+                            <input type="file" id="edit-image-file" accept="image/*">
+                        </div>
+
+                        <div class="form-group">
+                            <label>OR Image URL (የፎቶ ሊንክ)</label>
+                            <input type="text" id="edit-image-url" value="` + (imageUrl && !imageUrl.startsWith('/uploads/') ? imageUrl : '') + `" placeholder="https://...">
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="document.getElementById('edit-product-modal').style.display='none'">Cancel</button>
+                            <button type="submit" class="btn" style="flex: 1; justify-content: center;"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            modal.style.display = 'flex';
+
+            document.getElementById('edit-product-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const formData = new FormData();
+                formData.append('price', parseFloat(document.getElementById('edit-price').value));
+                formData.append('stock_quantity', parseInt(document.getElementById('edit-stock').value));
+                formData.append('image_url', document.getElementById('edit-image-url').value.trim());
+
+                const fileInput = document.getElementById('edit-image-file');
+                if (fileInput.files.length > 0) {
+                    formData.append('image_file', fileInput.files[0]);
+                }
+
+                try {
+                    const res = await fetch('/api/products/' + id, {
+                        method: 'PUT',
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (res.ok && data.status === 'success') {
+                        modal.style.display = 'none';
+                        alert('የእቃው ዝርዝር ተስተካክሏል!');
+                        await window.loadProducts();
+                    } else {
+                        alert('ማስተካከያው አልተሳካም');
+                    }
+                } catch (err) { alert('በማስተካከያው ወቅት ኤረር አጋጥሟል'); }
+            };
+        };
+
+        function showPaymentModal(totalAmount) {
+            let modal = document.getElementById('payment-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'payment-modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;';
+                document.body.appendChild(modal);
+            }
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 0.75rem; width: 100%; max-width: 440px;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-wallet"></i> የክፍያ ማረጋገጫ ያስገቡ</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        ክፍያ የሚፈፀመው ሂሳብ: <strong style="color: var(--primary); font-size: 1.1rem;">$` + totalAmount.toFixed(2) + `</strong>
+                    </p>
+                    
+                    <form id="payment-form">
+                        <div class="form-group">
+                            <label>የክፍያ አይነት</label>
+                            <select id="pay-method">
+                                <option value="Telebirr">Telebirr (ቴሌብር)</option>
+                                <option value="CBE Birr">CBE Birr (ንግድ ባንክ)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>የክፍያ ማረጋገጫ ቁጥር (Transaction Ref / TXN ID)</label>
+                            <input type="text" id="pay-ref" required placeholder="ምሳሌ፦ TXN987654321" minlength="4">
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="document.getElementById('payment-modal').style.display='none'">ሰርዝ</button>
+                            <button type="submit" class="btn" style="flex: 1; justify-content: center;"><i class="fa-solid fa-paper-plane"></i> ላክ</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            modal.style.display = 'flex';
+
+            document.getElementById('payment-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const selectedMethod = document.getElementById('pay-method').value;
+                const txnRef = document.getElementById('pay-ref').value.trim();
+
+                try {
+                    const checkoutRes = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            user_id: currentUser.user_id,
+                            payment_method: selectedMethod,
+                            transaction_ref: txnRef
+                        })
+                    });
+                    const checkoutData = await checkoutRes.json();
+                    
+                    if (checkoutRes.ok && checkoutData.status === 'success') {
+                        modal.style.display = 'none';
+                        alert('ትዕዛዝዎ በስኬት ተመዝግቧል!');
+                        window.loadCart();
+                        window.loadProducts();
+                        window.loadCustomerOrders();
+                    } else {
+                        alert('ትዕዛዙ አልተመዘገበም: ' + (checkoutData.message || 'Error'));
+                    }
+                } catch (err) { alert('የኔትወርክ ችግር አጋጥሟል'); }
+            };
+        }
+
+        function renderProductsGrid(products) {
+            const grid = document.getElementById('products-container');
+            if (!grid) return;
+
+            if (products.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">ምንም እቃ አልተገኘም።</p>';
+                return;
+            }
+
+            grid.innerHTML = products.map(p => {
+                const isOutOfStock = (p.stock_quantity ?? 0) <= 0;
+                const fallbackImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80';
+                let imageSrc = (p.image_url && p.image_url.trim() !== '') ? p.image_url : fallbackImg;
+
+                const safeName = p.name ? p.name.replace(/'/g, "\\'") : '';
+                const safeImageUrl = p.image_url ? p.image_url.replace(/'/g, "\\'") : '';
+
+                return `
+                    <div class="product-card">
+                        <img src="` + imageSrc + `" class="product-img" alt="` + p.name + `" onerror="this.onerror=null; this.src='` + fallbackImg + `';">
+                        <div class="product-info">
+                            <div>
+                                <div class="product-title">` + p.name + `</div>
+                                <div class="product-price">$` + parseFloat(p.price).toFixed(2) + `</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Stock: ` + p.stock_quantity + `</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">` + (p.description || '') + `</div>
+                            </div>
+                            ` + (activeViewMode === 'user' ? `
+                                <button onclick="addToCart(` + p.product_id + `)" ` + (isOutOfStock ? 'disabled' : '') + ` style="width: 100%; justify-content: center; margin-top: 1rem;">
+                                    ` + (isOutOfStock ? 'Out of Stock' : '<i class="fa-solid fa-cart-plus"></i> Add to Cart') + `
+                                </button>
+                            ` : `
+                                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                    <button onclick="openEditModal(` + p.product_id + `, '` + safeName + `', ` + p.price + `, ` + p.stock_quantity + `, '` + safeImageUrl + `')" class="btn-warning" style="flex: 1; justify-content: center; padding: 0.4rem; font-size: 0.85rem;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
+                                    <button onclick="deleteProduct(` + p.product_id + `)" class="btn-danger" style="flex: 1; justify-content: center; padding: 0.4rem; font-size: 0.85rem;">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `) + `
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.applySearchAndFilter = function() {
+            const searchVal = document.getElementById('search-query') ? document.getElementById('search-query').value.toLowerCase().trim() : '';
+            const minPrice = document.getElementById('min-price') && document.getElementById('min-price').value !== '' ? parseFloat(document.getElementById('min-price').value) : null;
+            const maxPrice = document.getElementById('max-price') && document.getElementById('max-price').value !== '' ? parseFloat(document.getElementById('max-price').value) : null;
+
+            const filtered = allProducts.filter(p => {
+                const matchesName = p.name.toLowerCase().includes(searchVal) || (p.description && p.description.toLowerCase().includes(searchVal));
+                const price = parseFloat(p.price);
+                const matchesMin = minPrice === null || price >= minPrice;
+                const matchesMax = maxPrice === null || price <= maxPrice;
+                return matchesName && matchesMin && matchesMax;
+            });
+
+            renderProductsGrid(filtered);
+        };
+
+        window.loadProducts = async function() {
+            try {
+                const res = await fetch('/api/products?t=' + Date.now());
+                const data = await res.json();
+                if (data.status === 'success') {
+                    allProducts = data.data;
+                    window.applySearchAndFilter();
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        window.loadAdminOrders = async function() {
+            try {
+                const res = await fetch('/api/orders');
+                const data = await res.json();
+                const container = document.getElementById('admin-orders-container');
+                if (container && data.status === 'success' && data.data.length > 0) {
+                    container.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left;">
+                                    <th style="padding: 0.75rem;">Order ID</th>
+                                    <th style="padding: 0.75rem;">Customer</th>
+                                    <th style="padding: 0.75rem;">Ordered Items</th>
+                                    <th style="padding: 0.75rem;">Amount</th>
+                                    <th style="padding: 0.75rem;">Method & TXN Ref</th>
+                                    <th style="padding: 0.75rem;">Status</th>
+                                    <th style="padding: 0.75rem;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ` + data.data.map(o => {
+                                    let itemsList = (o.items || []).map(i => i.name ? `${i.name} (x${i.quantity})` : '').filter(Boolean).join(', ');
+                                    return `
+                                    <tr>
+                                        <td style="padding: 0.75rem;">#` + o.order_id + `</td>
+                                        <td style="padding: 0.75rem;">` + o.username + `<br><small style="color:var(--text-muted)">` + o.email + `</small></td>
+                                        <td style="padding: 0.75rem; font-weight: 500; color: #334155;">` + (itemsList || 'N/A') + `</td>
+                                        <td style="padding: 0.75rem; font-weight: 700; color: var(--primary);">$` + parseFloat(o.total_amount).toFixed(2) + `</td>
+                                        <td style="padding: 0.75rem;">
+                                            <div><strong>` + o.payment_method + `</strong></div>
+                                            <div style="color: var(--primary); font-family: monospace;">` + (o.transaction_ref || 'N/A') + `</div>
+                                        </td>
+                                        <td style="padding: 0.75rem;">
+                                            <span class="status-badge status-` + (o.status || 'Pending').toLowerCase() + `">` + (o.status || 'Pending') + `</span>
+                                        </td>
+                                        <td style="padding: 0.75rem;">
+                                            ` + (o.status === 'Pending' ? `
+                                                <div style="display: flex; gap: 0.3rem;">
+                                                    <button onclick="updateOrderStatus(` + o.order_id + `, 'Approved')" class="btn-success" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Approve</button>
+                                                    <button onclick="updateOrderStatus(` + o.order_id + `, 'Rejected')" class="btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Reject</button>
+                                                </div>
+                                            ` : `<span style="color: var(--text-muted); font-size: 0.8rem;">Processed</span>`) + `
+                                        </td>
+                                    </tr>
+                                `;}).join('') + `
+                            </tbody>
+                        </table>
+                    `;
+                } else if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted);">እስካሁን የተሸጠ እቃ የለም።</p>';
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        window.loadProductAnalytics = async function() {
+            try {
+                const res = await fetch('/api/orders/analytics/products');
+                const data = await res.json();
+                const container = document.getElementById('product-analytics-container');
+                if (container && data.status === 'success' && data.data.length > 0) {
+                    container.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left;">
+                                    <th style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">Product Name</th>
+                                    <th style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">Price</th>
+                                    <th style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">Remaining Stock</th>
+                                    <th style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">Total Sold (የተሸጠው ብዛት)</th>
+                                    <th style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">Total Revenue (የተገኘ ገቢ)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ` + data.data.map(p => `
+                                    <tr style="` + (p.is_deleted ? 'background-color: #fef2f2;' : '') + `">
+                                        <td style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); font-weight: 600;">
+                                            ` + p.name + ` ` + (p.is_deleted ? '<span style="color: var(--danger); font-size: 0.75rem;">(Deleted)</span>' : '') + `
+                                        </td>
+                                        <td style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">$` + parseFloat(p.price).toFixed(2) + `</td>
+                                        <td style="padding: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                                            ` + (p.is_deleted ? '<span style="color: var(--text-muted); font-style: italic;">Archived</span>' : p.stock_quantity) + `
+                                        </td>
+                                        <td style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); font-weight: 700; color: #166534;">
+                                            ` + p.total_sold + ` units
+                                        </td>
+                                        <td style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); font-weight: 700; color: var(--primary);">
+                                            $` + parseFloat(p.total_revenue).toFixed(2) + `
+                                        </td>
+                                    </tr>
+                                `).join('') + `
+                            </tbody>
+                        </table>
+                    `;
+                } else if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted);">ምንም አይነት የሽያጭ መረጃ አልተገኘም።</p>';
+                }
+            } catch (err) { console.error('Analytics load error:', err); }
+        };
+
+        window.loadCustomerOrders = async function() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch('/api/orders/user/' + currentUser.user_id);
+                const data = await res.json();
+                const container = document.getElementById('customer-orders-container');
+                if (container && data.status === 'success' && data.data.length > 0) {
+                    container.innerHTML = data.data.map(o => {
+                        let itemsList = (o.items || []).map(i => i.name ? `${i.name} (x${i.quantity})` : '').filter(Boolean).join(', ');
+                        return `
+                        <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                                <span>Order #${o.order_id}</span>
+                                <span style="color: var(--primary);">$${parseFloat(o.total_amount).toFixed(2)}</span>
+                            </div>
+                            <div style="margin: 0.3rem 0; color: #334155; font-size: 0.8rem; background: #f1f5f9; padding: 0.4rem; border-radius: 0.25rem;">
+                                <strong>የተገዙ እቃዎች፦</strong> ${itemsList || 'N/A'}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.3rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">TXN: ${o.transaction_ref || 'N/A'} (${o.payment_method})</span>
+                                <span class="status-badge status-${(o.status || 'Pending').toLowerCase()}">${o.status || 'Pending'}</span>
+                            </div>
+                        </div>
+                    `;}).join('');
+                } else if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">እስካሁን ምንም ትዕዛዝ አልፈጸሙም።</p>';
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        window.loadCart = async function() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch('/api/cart/' + currentUser.user_id);
+                const data = await res.json();
+                const container = document.getElementById('cart-items-container');
+                const footer = document.getElementById('cart-footer');
+                const totalPriceEl = document.getElementById('cart-total-price');
+                
+                if (container && data.status === 'success' && data.data.length > 0) {
+                    let total = 0;
+                    container.innerHTML = data.data.map(item => {
+                        total += item.price * item.quantity;
+                        return `
+                            <div class="cart-item">
+                                <div>
+                                    <div style="font-weight: 550;">` + item.name + `</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Qty: ` + item.quantity + ` x $` + parseFloat(item.price).toFixed(2) + `</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-weight: 650; color: var(--primary);">$` + (item.price * item.quantity).toFixed(2) + `</span>
+                                    <button onclick="removeCartItem(` + item.cart_id + `)" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    if (totalPriceEl) totalPriceEl.textContent = '$' + total.toFixed(2);
+                    if (footer) footer.style.display = 'block';
+
+                    const checkoutBtn = document.getElementById('checkout-btn');
+                    if (checkoutBtn) {
+                        checkoutBtn.onclick = () => showPaymentModal(total);
+                    }
+                } else if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Your cart is empty.</p>';
+                    if (footer) footer.style.display = 'none';
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        function renderApp() {
+            const container = document.getElementById('app-content');
+            const navActions = document.getElementById('nav-actions');
+
+            if (!activeViewMode) {
+                navActions.innerHTML = '';
+                container.innerHTML = `
+                    <div class="portal-wrapper">
+                        <h1 class="portal-title">Welcome to E-Commerce Portal</h1>
+                        <p class="portal-subtitle">Select Portal</p>
+                        <div class="role-cards-container">
+                            <div class="role-card" onclick="selectRole('admin')">
+                                <div class="role-icon"><i class="fa-solid fa-user-shield"></i></div>
+                                <h3>Admin Portal</h3>
+                                <button class="btn">Enter Admin</button>
+                            </div>
+                            <div class="role-card" onclick="selectRole('user')">
+                                <div class="role-icon"><i class="fa-solid fa-user-tag"></i></div>
+                                <h3>Customer Portal</h3>
+                                <button class="btn btn-outline">Enter Customer</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!currentUser) {
+                navActions.innerHTML = '<button class="btn btn-outline" onclick="selectRole(null)"><i class="fa-solid fa-arrow-left"></i> Switch</button>';
+                container.innerHTML = `
+                    <div class="auth-wrapper">
+                        <div class="auth-card">
+                            <h2>` + (activeViewMode === 'admin' ? 'Admin Login' : (isRegisterMode ? 'Register' : 'Login')) + `</h2>
+                            <form id="auth-form">
+                                ` + (isRegisterMode && activeViewMode === 'user' ? '<div class="form-group"><label>Username</label><input type="text" id="username" required></div>' : '') + `
+                                <div class="form-group"><label>Email</label><input type="email" id="email" required></div>
+                                <div class="form-group"><label>Password</label><input type="password" id="password" required></div>
+                                <button type="submit" style="width: 100%; justify-content: center;">Submit</button>
+                                <div id="login-error" class="error-msg"></div>
+                            </form>
+                            ` + (activeViewMode === 'user' ? '<p style="margin-top: 1rem; text-align: center;"><span class="toggle-link" onclick="toggleAuthMode()">' + (isRegisterMode ? 'Login' : 'Register') + '</span></p>' : '') + `
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('auth-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const username = document.getElementById('username') ? document.getElementById('username').value : '';
+                    let endpoint = (isRegisterMode && activeViewMode === 'user') ? '/api/auth/register' : '/api/auth/login';
+
+                    try {
+                        const res = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, email, password })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.status === 'success') {
+                            currentUser = data.data;
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                            renderApp();
+                        } else {
+                            document.getElementById('login-error').textContent = data.message || 'Error';
+                        }
+                    } catch (err) { alert('Connection error'); }
+                };
+
+            } else {
+                navActions.innerHTML = `
+                    <span>` + currentUser.username + ` ` + (activeViewMode === 'admin' ? '<span class="admin-badge">Admin</span>' : '') + `</span>
+                    <button class="btn btn-outline" onclick="selectRole(null)"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                `;
+
+                if (activeViewMode === 'admin' && currentUser.is_admin) {
+                    container.innerHTML = `
+                        <div class="admin-dashboard">
+                            <div class="admin-header-box">
+                                <h2><i class="fa-solid fa-gauge-high"></i> Admin Portal</h2>
+                            </div>
+
+                            <div class="admin-nav-tabs">
+                                <button class="admin-tab-btn ` + (activeAdminTab === 'add' ? 'active' : '') + `" onclick="switchAdminTab('add')">Add Product</button>
+                                <button class="admin-tab-btn ` + (activeAdminTab === 'catalog' ? 'active' : '') + `" onclick="switchAdminTab('catalog')">Products Catalog</button>
+                                <button class="admin-tab-btn ` + (activeAdminTab === 'orders' ? 'active' : '') + `" onclick="switchAdminTab('orders')">Sales Orders (ማረጋገጫ)</button>
+                                <button class="admin-tab-btn ` + (activeAdminTab === 'analytics' ? 'active' : '') + `" onclick="switchAdminTab('analytics')">Sales Analytics</button>
+                            </div>
+
+                            <div class="card-box" id="tab-add" style="display: ` + (activeAdminTab === 'add' ? 'block' : 'none') + `;">
+                                <h3 class="section-title"><i class="fa-solid fa-circle-plus"></i> Add New Product</h3>
+                                <form id="admin-add-product-form" style="max-width: 600px;">
+                                    <div class="form-group"><label>Product Name</label><input type="text" id="ap-name" required></div>
+                                    <div class="form-group"><label>Price ($)</label><input type="number" step="0.01" id="ap-price" required></div>
+                                    <div class="form-group"><label>Stock Quantity</label><input type="number" id="ap-stock" value="10"></div>
+                                    <div class="form-group">
+                                        <label>Upload Image File (ከኮምፒውተርህ ፋይል)</label>
+                                        <input type="file" id="ap-image-file" accept="image/*">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>OR Image URL (የፎቶ ሊንክ)</label>
+                                        <input type="text" id="ap-image-url" placeholder="https://...">
+                                    </div>
+                                    <div class="form-group"><label>Description</label><textarea id="ap-desc" rows="3"></textarea></div>
+                                    <button type="submit">Save Product</button>
+                                </form>
+                            </div>
+
+                            <div class="card-box" id="tab-catalog" style="display: ` + (activeAdminTab === 'catalog' ? 'block' : 'none') + `;">
+                                <div class="search-filter-box">
+                                    <div class="search-input-group">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="search-query" placeholder="Search products..." oninput="applySearchAndFilter()">
+                                    </div>
+                                    <div class="filter-input-group">
+                                        <input type="number" id="min-price" placeholder="Min $" oninput="applySearchAndFilter()">
+                                    </div>
+                                    <div class="filter-input-group">
+                                        <input type="number" id="max-price" placeholder="Max $" oninput="applySearchAndFilter()">
+                                    </div>
+                                </div>
+                                <div id="products-container" class="products-grid"></div>
+                            </div>
+
+                            <div class="card-box" id="tab-orders" style="display: ` + (activeAdminTab === 'orders' ? 'block' : 'none') + `;">
+                                <h3 class="section-title"><i class="fa-solid fa-receipt"></i> Customer Orders</h3>
+                                <div id="admin-orders-container" style="overflow-x: auto;"></div>
+                            </div>
+
+                            <div class="card-box" id="tab-analytics" style="display: ` + (activeAdminTab === 'analytics' ? 'block' : 'none') + `;">
+                                <h3 class="section-title"><i class="fa-solid fa-chart-line"></i> Product Sales Analytics</h3>
+                                <div id="product-analytics-container" style="overflow-x: auto;">
+                                    <p style="color: var(--text-muted);">Loading Analytics...</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    const addForm = document.getElementById('admin-add-product-form');
+                    if (addForm) {
+                        addForm.onsubmit = async (e) => {
+                            e.preventDefault();
+                            const formData = new FormData();
+                            formData.append('name', document.getElementById('ap-name').value);
+                            formData.append('price', parseFloat(document.getElementById('ap-price').value));
+                            formData.append('stock_quantity', parseInt(document.getElementById('ap-stock').value));
+                            formData.append('image_url', document.getElementById('ap-image-url').value.trim());
+                            formData.append('description', document.getElementById('ap-desc').value);
+
+                            const fileInput = document.getElementById('ap-image-file');
+                            if (fileInput.files.length > 0) {
+                                formData.append('image_file', fileInput.files[0]);
+                            }
+
+                            const res = await fetch('/api/products', { method: 'POST', body: formData });
+                            if (res.ok) {
+                                e.target.reset();
+                                alert('Product added successfully!');
+                                switchAdminTab('catalog');
+                            } else {
+                                alert('Failed to add product');
+                            }
+                        };
+                    }
+
+                    if (activeAdminTab === 'catalog') window.loadProducts();
+                    if (activeAdminTab === 'orders') window.loadAdminOrders();
+                    if (activeAdminTab === 'analytics') window.loadProductAnalytics();
+
+                } else {
+                    container.innerHTML = `
+                        <div class="user-dashboard">
+                            <div>
+                                <h3 class="section-title"><i class="fa-solid fa-bag-shopping"></i> Products</h3>
+                                <div class="search-filter-box">
+                                    <div class="search-input-group">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="search-query" placeholder="Search products..." oninput="applySearchAndFilter()">
+                                    </div>
+                                    <div class="filter-input-group">
+                                        <input type="number" id="min-price" placeholder="Min $" oninput="applySearchAndFilter()">
+                                    </div>
+                                    <div class="filter-input-group">
+                                        <input type="number" id="max-price" placeholder="Max $" oninput="applySearchAndFilter()">
+                                    </div>
+                                </div>
+                                <div id="products-container" class="products-grid"></div>
+                            </div>
+                            <div>
+                                <div class="card-box" style="margin-bottom: 1.5rem;">
+                                    <h3 class="section-title"><i class="fa-solid fa-cart-shopping"></i> Shopping Cart</h3>
+                                    <div id="cart-items-container"></div>
+                                    <div id="cart-footer" style="display: none;">
+                                        <div class="cart-total"><span>Total:</span><span id="cart-total-price">$0.00</span></div>
+                                        <button id="checkout-btn" style="width: 100%; justify-content: center; margin-top: 1rem;">Proceed to Checkout</button>
+                                    </div>
+                                </div>
+
+                                <div class="card-box">
+                                    <h3 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> የኔ ትዕዛዞች</h3>
+                                    <div id="customer-orders-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    window.loadProducts();
+                    window.loadCart();
+                    window.loadCustomerOrders();
+                }
+            }
+        }
+
+        renderApp();
+    </script>
+</body>
+</html>
